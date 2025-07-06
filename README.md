@@ -15,6 +15,14 @@ Proyek ini menerapkan pipeline data engineering batch untuk menganalisis data ke
 - Data Type: Accident records involving vehicles, casualties, and environmental conditions.
 - Format: CSV
 
+**Key Attributes**
+- Accident index and severity
+- Geospatial information (Latitude, Longitude)
+- Date and time of the accident
+- Road conditions and weather
+- Vehicle and casualty types
+- Demographics of a person involved in the accident
+
 **Acknowledgments**
 Dataset by Abdul Mannan (Kaggle)
 Tools & packages from open-source community
