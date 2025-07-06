@@ -14,6 +14,7 @@ Proyek ini menerapkan pipeline data engineering batch untuk menganalisis data ke
 - Region: Great Britain (England, Scotland, and Wales)
 - Data Type: Accident records involving vehicles, casualties, and environmental conditions.
 - Format: CSV
+
 **Acknowledgments**
 Dataset by Abdul Mannan (Kaggle)
 Tools & packages from open-source community
