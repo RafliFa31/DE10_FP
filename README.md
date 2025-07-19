@@ -1,9 +1,20 @@
 ##Automated Annual Air Quality Monitoring for Bandung
+
 Overview
 
-This project implements an end-to-end data engineering pipeline to process and monitor annual air quality metrics (PM2.5 & PM10) for Bandung using public sources (BMKG, data.go.id, Nafas, IQAir). It enables environmental risk management by automatically detecting abnormal pollution spikes and long-term trend shifts, empowering policymakers and communities to respond proactively.
 
-The solution comprises ETL workflows orchestrated with Apache Airflow, Python scripts that extract and stage raw data in PostgreSQL, batch transformations with Apache Spark to calculate annual averages, maxima, and anomaly flags, storage of aggregated results in partitioned PostgreSQL tables, an interactive Streamlit dashboard for visualization, and proactive email/Telegram alerts whenever pollution thresholds are breached.
+This project implements an end-to-end data engineering pipeline to process and monitor annual air quality metrics (PM2.5 & PM10) for Bandung using 
+
+public sources (BMKG, data.go.id, Nafas, IQAir). It enables environmental risk management by automatically detecting abnormal pollution spikes and long-
+
+term trend shifts, empowering policymakers and communities to respond proactively.
+
+
+The solution comprises ETL workflows orchestrated with Apache Airflow, Python scripts that extract and stage raw data in PostgreSQL, batch 
+
+transformations with Apache Spark to calculate annual averages, maxima, and anomaly flags, storage of aggregated results in partitioned PostgreSQL 
+
+tables, an interactive Streamlit dashboard for visualization, and proactive email/Telegram alerts whenever pollution thresholds are breached.
 
 📁 Project Structure
 
