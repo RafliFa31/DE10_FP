@@ -80,42 +80,28 @@ Alerting             SMTP, Telegram Bot
 Containerization     Docker, Docker Compose
 
 📐 Architecture
-+-------------------------------------+
-| 1. Public Data Sources              |
-|    (API, CSV, PDF, Web)             |
-+------------------+------------------+
-                   |
-                   v (Diperintah oleh Airflow)
-+-------------------------------------+
-| 2. Python Extraction Scripts        |
-|    (Mengambil & menyimpan data mentah)|
-+------------------+------------------+
-                   |
-                   v
-+-------------------------------------+
-| 3. Staging Area (PostgreSQL)        |
-|    (Tempat data mentah dikumpulkan) |
-+------------------+------------------+
-                   |
-                   v (Diperintah oleh Airflow)
-+-------------------------------------+
-| 4. Apache Spark Batch Job           |
-|    - Membersihkan data mentah       |
-|    - Menghitung agregat (avg, max)  |
-|    - Menyimpan data matang          |
-+------------------+------------------+
-                   |
-                   v
-+-------------------------------------+
-| 5. Data Warehouse (PostgreSQL)      |
-|    (Data bersih & siap dianalisis)  |
-+------------------+------------------+
-                   |
-                   v
-+-------------------------------------+
-| 6. Streamlit Dashboard              |
-|    (Membaca & memvisualisasikan data)|
-+-------------------------------------+
+1. Sumber Data Awal]
+     (File CSV)
+          |
+          v
+[2. Ekstraksi Data] ——— (Diperintah oleh 💨 Airflow)
+    (Python Script)
+          |
+          v
+[3. Staging Area]
+   (PostgreSQL 🐘)
+          |
+          v
+[4. Transformasi Data] — (Diperintah oleh 💨 Airflow)
+  (Apache Spark ✨)
+          |
+          v
+[5. Data Warehouse]
+   (PostgreSQL 🐘)
+          |
+          v
+[6. Visualisasi & Aksi]
+ (Streamlit Dashboard 📊)
 
 🚀 Getting Started
 
