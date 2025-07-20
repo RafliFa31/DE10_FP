@@ -103,24 +103,39 @@ Containerization     Docker, Docker Compose
 [6. Visualisasi & Aksi]
  (Streamlit Dashboard 📊)
 
-🚀 Getting Started
+Pipeline Overview
 
-Clone this repository
-Copy .env.example → .env and provide PostgreSQL and Telegram credentials
+    ETL (Airflow DAG air_quality_etl_pipeline)
 
-Start services:
-docker-compose up -d
+        Extract: Membaca data dari file bandung_air_quality.csv.
 
-Install Python dependencies:
-docker exec -it <airflow_container> pip install -r requirements.txt
+        Load (Staging): Menyimpan data mentah ke tabel staging.raw_air_quality di PostgreSQL.
 
-Place your DAG in dags/, scripts in dags/scripts/, and Spark job in spark_jobs/
+    Analytics Generation (Spark Job)
 
-Access services:
+        Transform: Membaca data dari staging, memvalidasi skema, dan melakukan transformasi dasar (misal: mengganti nama kolom).
 
-    Airflow: http://localhost:8080
+        Load (Warehouse): Menyimpan data matang yang sudah diolah ke tabel warehouse.fact_yearly_air_quality.
 
-    Streamlit: http://localhost:8501
+    Visualization (Streamlit)
+
+        Query: Aplikasi Streamlit melakukan kueri langsung ke tabel warehouse di PostgreSQL.
+
+        Display: Menampilkan tren kualitas udara tahunan dalam bentuk grafik batang dan tabel interaktif.1
+
+Keterbatasan & Rekomendasi (Limitations & Recommendations)
+Untuk pengembangan di masa depan, terdapat beberapa keterbatasan pada platform saat ini yang bisa menjadi peluang untuk perbaikan:
+Keterbatasan Sumber Data: 
+Kondisi Saat Ini: Proses ekstraksi data masih bergantung pada file CSV yang disiapkan secara semi-manual.
+Rekomendasi: Mengintegrasikan pipeline secara langsung dengan API publik (BMKG) dan teknik web scraping untuk mencapai otomatisasi penuh dan memperkaya data.
+
+Keterbatasan Model Pemrosesan:
+Kondisi Saat Ini: Platform hanya berjalan dalam mode batch (tahunan), sehingga cocok untuk analisis historis tetapi tidak untuk pemantauan real-time.
+Rekomendasi: Jika kebutuhan bisnis berkembang, platform dapat diperluas dengan menambahkan alur streaming menggunakan teknologi seperti Apache Kafka dan Spark Streaming untuk notifikasi yang lebih cepat.
+Keterbatasan Fitur Dashboard:
+Kondisi Saat Ini: Dashboard Streamlit menyajikan visualisasi data dasar yang informatif.
+Rekomendasi: Menambahkan fitur analitik yang lebih canggih di masa depan, seperti analisis prediktif (forecasting) untuk memperkirakan kualitas udara atau analisis korelasi dengan data lain (misalnya, data cuaca atau lalu lintas).
+
 
 
 👤 Author
