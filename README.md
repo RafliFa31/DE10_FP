@@ -1,5 +1,3 @@
-
-
 # 🚦 Automated Annual Air Quality Monitoring for Bandung
 
 ## 📄 Overview
@@ -82,35 +80,42 @@ Alerting             SMTP, Telegram Bot
 Containerization     Docker, Docker Compose
 
 📐 Architecture
-+-----------------------------+
-| Public Data Sources (Annual)|
-| - BMKG API (JSON)           |
-| - data.go.id (CSV/JSON)     |
-| - Nafas (PDF/Excel)         |
-| - IQAir Bandung (HTML/JSON) |
-+-------------+---------------+
-              |
-              v
-+-----------------------------+
-| Airflow DAG Scheduler       |
-| - Extract & Stage Raw Data  |
-| - Spark Yearly Aggregation  |
-| - Anomaly & Alert Logic     |
-+-------------+---------------+
-              |
-              v
-+-----------------------------+
-| PostgreSQL Data Warehouse   |
-| - warehouse.yearly_air_quality |
-+-------------+---------------+
-              |
-              v
-+-----------------------------+
-| Streamlit Dashboard         |
-| - Annual Trends & Heatmaps  |
-| - Filters & Drill-down      |
-| - Email/Telegram Alerts     |
-+-----------------------------+
++-------------------------------------+
+| 1. Public Data Sources              |
+|    (API, CSV, PDF, Web)             |
++------------------+------------------+
+                   |
+                   v (Diperintah oleh Airflow)
++-------------------------------------+
+| 2. Python Extraction Scripts        |
+|    (Mengambil & menyimpan data mentah)|
++------------------+------------------+
+                   |
+                   v
++-------------------------------------+
+| 3. Staging Area (PostgreSQL)        |
+|    (Tempat data mentah dikumpulkan) |
++------------------+------------------+
+                   |
+                   v (Diperintah oleh Airflow)
++-------------------------------------+
+| 4. Apache Spark Batch Job           |
+|    - Membersihkan data mentah       |
+|    - Menghitung agregat (avg, max)  |
+|    - Menyimpan data matang          |
++------------------+------------------+
+                   |
+                   v
++-------------------------------------+
+| 5. Data Warehouse (PostgreSQL)      |
+|    (Data bersih & siap dianalisis)  |
++------------------+------------------+
+                   |
+                   v
++-------------------------------------+
+| 6. Streamlit Dashboard              |
+|    (Membaca & memvisualisasikan data)|
++-------------------------------------+
 
 🚀 Getting Started
 
