@@ -71,15 +71,46 @@ bandung_airbatch/
     🐳 Docker Compose setup for deployment
 
 🛠️ Tech Stack
-Component	Tool
-Orchestration	Apache Airflow
-Extraction & ETL	Python (requests, pandas, tabula-py)
-Batch Processing	Apache Spark
-Data Storage	PostgreSQL
-Visualization	Streamlit
-Alerting	SMTP, Telegram Bot
-Containerization	Docker, Docker Compose
+Component            Tool
+-------------------- --------------------------------------
+Orchestration        Apache Airflow
+Extraction & ETL     Python (requests, pandas, tabula-py)
+Batch Processing     Apache Spark
+Data Storage         PostgreSQL
+Visualization        Streamlit
+Alerting             SMTP, Telegram Bot
+Containerization     Docker, Docker Compose
 
+📐 Architecture
++-----------------------------+
+| Public Data Sources (Annual)|
+| - BMKG API (JSON)           |
+| - data.go.id (CSV/JSON)     |
+| - Nafas (PDF/Excel)         |
+| - IQAir Bandung (HTML/JSON) |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+| Airflow DAG Scheduler       |
+| - Extract & Stage Raw Data  |
+| - Spark Yearly Aggregation  |
+| - Anomaly & Alert Logic     |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+| PostgreSQL Data Warehouse   |
+| - warehouse.yearly_air_quality |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+| Streamlit Dashboard         |
+| - Annual Trends & Heatmaps  |
+| - Filters & Drill-down      |
+| - Email/Telegram Alerts     |
++-----------------------------+
 
 🚀 Getting Started
 
