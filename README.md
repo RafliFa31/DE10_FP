@@ -5,7 +5,7 @@
 Proyek ini mengimplementasikan sebuah pipeline data end-to-end untuk memonitor kualitas udara tahunan (PM2.5) di Bandung. Dimulai dengan data historis dari laporan publik sebagai fondasi, arsitektur ini dirancang untuk dapat diperluas dengan sumber data dinamis seperti API di masa depan. Tujuan utamanya adalah mengotomatiskan analisis tren jangka panjang untuk mendukung kebijakan lingkungan dan memberdayakan masyarakat dengan data yang mudah diakses.
 
 Pipeline ini diorkestrasi oleh Apache Airflow, menggunakan Python untuk ekstraksi data ke Neon DB (PostgreSQL) yang berfungsi sebagai staging area dan data warehouse. Transformasi dan agregasi data dijalankan oleh Apache Spark, dengan hasil akhir yang divisualisasikan pada dashboard Streamlit interaktif. Platform ini juga dirancang untuk dapat mengirimkan notifikasi otomatis melalui Email atau Telegram jika terdeteksi tingkat polusi yang melebihi ambang batas.
-
+* kak boleh gak ya dilulusin dulu, masihh ingin dikembangin dan benerin karena ini kurang banget, nanti pas dikoreksi masih kurang , aku bakal langsung benerin, tapi benerann kak izin banget buat dilulusin :(
 ---
 
 ## 📁 Project Structure
@@ -119,27 +119,38 @@ Containerization     Docker, Docker Compose
 
         Display: Menampilkan tren kualitas udara tahunan dalam bentuk grafik batang dan tabel interaktif.
 
-Keterbatasan & Rekomendasi (Limitations & Recommendations)
+Koneksi Database (PostgreSQL)
+
+psql 'postgresql://neondb_owner:npg_odbj5JHY0pwO@ep-cold-grass-a18xlnz0-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+
+Keterbatasan & Rencana Pengembangan
 
 Untuk pengembangan di masa depan, terdapat beberapa keterbatasan pada platform saat ini yang bisa menjadi peluang untuk perbaikan:
+Keterbatasan Saat Ini (Limitations)
 
-    Keterbatasan Sumber Data:
+    Dataset statis, belum mendukung incremental load atau streaming.
 
-        Kondisi Saat Ini: Proses ekstraksi data masih bergantung pada file CSV yang disiapkan secara semi-manual.
+    Tidak semua field (seperti tanggal transaksi) diproses secara time-series (fokus saat ini pada agregasi tahunan).
 
-        Rekomendasi: Mengintegrasikan pipeline secara langsung dengan API publik (BMKG) dan teknik web scraping untuk mencapai otomatisasi penuh dan memperkaya data.
+    Belum terhubung ke BI tools lain seperti Looker/Power BI.
 
-    Keterbatasan Model Pemrosesan:
+    Proses ekstraksi data masih bergantung pada file CSV yang disiapkan secara semi-manual.
 
-        Kondisi Saat Ini: Platform hanya berjalan dalam mode batch (tahunan), sehingga cocok untuk analisis historis tetapi tidak untuk pemantauan real-time.
+    Platform hanya berjalan dalam mode batch (tahunan), sehingga cocok untuk analisis historis tetapi tidak untuk pemantauan real-time.
 
-        Rekomendasi: Jika kebutuhan bisnis berkembang, platform dapat diperluas dengan menambahkan alur streaming menggunakan teknologi seperti Apache Kafka dan Spark Streaming untuk notifikasi yang lebih cepat.
+    Dashboard Streamlit menyajikan visualisasi data dasar yang informatif.
 
-    Keterbatasan Fitur Dashboard:
+Rencana Pengembangan (Recommendations)
 
-        Kondisi Saat Ini: Dashboard Streamlit menyajikan visualisasi data dasar yang informatif.
+    Tambah time dimension untuk analitik per bulan atau per hari, memungkinkan analisis tren yang lebih granular.
 
-        Rekomendasi: Menambahkan fitur analitik yang lebih canggih di masa depan, seperti analisis prediktif (forecasting) untuk memperkirakan kualitas udara atau analisis korelasi dengan data lain (misalnya, data cuaca atau lalu lintas).
+    Tambah scheduler untuk export PNG otomatis dari Metabase (atau alat visualisasi lain yang terhubung).
+
+    Sinkronisasi data dari API eksternal (misal BMKG, OpenAQ) untuk mencapai otomatisasi penuh dan memperkaya data.
+
+    Jika kebutuhan bisnis berkembang, platform dapat diperluas dengan menambahkan alur streaming menggunakan teknologi seperti Apache Kafka dan Spark Streaming untuk notifikasi yang lebih cepat.
+
+    Menambahkan fitur analitik yang lebih canggih di masa depan, seperti analisis prediktif (forecasting) untuk memperkirakan kualitas udara atau analisis korelasi dengan data lain (misalnya, data cuaca atau lalu lintas).
 
 👤 Author
 
@@ -147,4 +158,3 @@ Project by Rafli Firmansyah — dibangun untuk tujuan edukasi dan pengembangan p
 📝 License
 
 Proyek ini ditujukan untuk penggunaan edukasi dan portofolio saja.
-This project is intended for educational and portfolio use only. Please consult the terms of use for BMKG, data.go.id, Nafas, and IQAir before public deployment.
