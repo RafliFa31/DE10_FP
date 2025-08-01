@@ -1,0 +1,10 @@
+apache-airflow==2.7.0
+apache-airflow-providers-cncf-kubernetes==7.1.0 # If you plan to use KubernetesExecutor later
+apache-airflow-providers-docker==3.8.0
+apache-airflow-providers-postgres==5.9.0
+apache-airflow[cncf.kubernetes,docker,postgres,s3,google]==2.7.0 # Minimal set of common providers
+pyspark==3.5.0
+pandas==2.2.2
+psycopg2-binary==2.9.9
+streamlit==1.36.0
+plotly==5.22.0
