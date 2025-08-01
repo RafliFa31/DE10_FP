@@ -48,7 +48,7 @@ Pipeline ini diorkestrasi oleh Apache Airflow, menggunakan Python untuk ekstraks
 -IQAir Bandung – scraped AQI and pollutant archive
 *untuk sekarang dataset yang saya gunakan dari nafas indonesia
 
-✨ Features
+ Features
 
     🌐 Ekstraksi data otomatis dari file CSV yang disediakan (dengan potensi ekspansi ke API dan web scraping di masa depan).
 
@@ -75,9 +75,8 @@ Visualization        Streamlit
 Alerting             SMTP, Telegram Bot
 Containerization     Docker, Docker Compose
 
-Architecture Diagram
-1. Sumber Data Awal]
-    (File CSV)
+[1. Sumber Data Awal]
+    (untuk awal sekarang file excel dulu, kedepannya ditingkatin berbagai sumber kak, masih bingung :()
         |
         v
 [2. Ekstraksi Data] ——— (Diorkestrasi oleh 💨 Airflow)
@@ -99,7 +98,8 @@ Architecture Diagram
 [6. Visualisasi & Aksi]
     (Streamlit Dashboard 📊)
 
-⚙️ Pipeline Overview
+
+⚙️⚙️ Pipeline Overview
 
     ETL (Airflow DAG yearly_air_quality_pipeline)
 
@@ -147,5 +147,4 @@ Project by Rafli Firmansyah — dibangun untuk tujuan edukasi dan pengembangan p
 📝 License
 
 Proyek ini ditujukan untuk penggunaan edukasi dan portofolio saja.
-
 This project is intended for educational and portfolio use only. Please consult the terms of use for BMKG, data.go.id, Nafas, and IQAir before public deployment.
