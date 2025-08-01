@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (for Airflow Metadata and Data Warehouse)
+  postgres:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-airflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airflow}
+      POSTGRES_DB: ${POSTGRES_DB:-airflow}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-airflow} -d ${POSTGRES_DB:-airflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Airflow Scheduler
+  airflow_scheduler:
+    image: apache/airflow:2.7.0
+    container_name: airflow_scheduler
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@postgres:5432/${POSTGRES_DB:-airflow}
+      AIRFLOW__WEBSERVER__RBAC: 'true'
+      AIRFLOW__WEBSERVER__AUTHENTICATE: 'true'
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      # Neon DB Connection String for DAGs
+      NEON_DB_CONN_STRING: "postgresql://neondb_owner:npg_xjLsAhE58WGI@ep-dark-frost-a1xm5slv-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./spark_jobs:/opt/airflow/spark_jobs
+      - ./data:/opt/airflow/data # Mount your data folder
+      - ./requirements.txt:/opt/airflow/requirements.txt
+    command: scheduler
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname $(hostname)"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Airflow Webserver
+  airflow_webserver:
+    image: apache/airflow:2.7.0
+    container_name: airflow_webserver
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@postgres:5432/${POSTGRES_DB:-airflow}
+      AIRFLOW__WEBSERVER__RBAC: 'true'
+      AIRFLOW__WEBSERVER__AUTHENTICATE: 'true'
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      # Neon DB Connection String for DAGs
+      NEON_DB_CONN_STRING: "postgresql://neondb_owner:npg_xjLsAhE58WGI@ep-dark-frost-a1xm5slv-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./spark_jobs:/opt/airflow/spark_jobs
+      - ./data:/opt/airflow/data # Mount your data folder
+      - ./requirements.txt:/opt/airflow/requirements.txt
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Airflow Worker (optional, but good for demonstrating distributed setup)
+  airflow_worker:
+    image: apache/airflow:2.7.0
+    container_name: airflow_worker
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow_scheduler:
+        condition: service_healthy
+    environment:
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@postgres:5432/${POSTGRES_DB:-airflow}
+      AIRFLOW__WEBSERVER__RBAC: 'true'
+      AIRFLOW__WEBSERVER__AUTHENTICATE: 'true'
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      # Neon DB Connection String for DAGs
+      NEON_DB_CONN_STRING: "postgresql://neondb_owner:npg_xjLsAhE58WGI@ep-dark-frost-a1xm5slv-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./spark_jobs:/opt/airflow/spark_jobs
+      - ./data:/opt/airflow/data # Mount your data folder
+      - ./requirements.txt:/opt/airflow/requirements.txt
+    command: worker
+
+  # Spark Master
+  spark_master:
+    image: bitnami/spark:3.5.0
+    container_name: spark_master
+    environment:
+      SPARK_MODE: master
+      SPARK_RPC_AUTHENTICATION_ENABLED: "no"
+      SPARK_RPC_ENCRYPTION_ENABLED: "no"
+      SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
+      SPARK_SSL_ENABLED: "no"
+    ports:
+      - "8081:8080" # Spark UI
+      - "7077:7077" # Spark Master internal communication
+
+  # Spark Worker
+  spark_worker:
+    image: bitnami/spark:3.5.0
+    container_name: spark_worker
+    environment:
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://spark_master:7077
+      SPARK_WORKER_MEMORY: 1G
+      SPARK_WORKER_CORES: 1
+      SPARK_RPC_AUTHENTICATION_ENABLED: "no"
+      SPARK_RPC_ENCRYPTION_ENABLED: "no"
+      SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: "no"
+      SPARK_SSL_ENABLED: "no"
+    depends_on:
+      - spark_master
+
+  # Streamlit Application
+  streamlit_app:
+    build:
+      context: ./streamlit_app # Build from the streamlit_app directory
+      dockerfile: Dockerfile
+    container_name: streamlit_dashboard
+    ports:
+      - "8501:8501" # Streamlit default port
+    environment:
+      # Neon DB Connection String for Streamlit
+      NEON_DB_CONN_STRING: "postgresql://neondb_owner:npg_xjLsAhE58WGI@ep-dark-frost-a1xm5slv-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    depends_on:
+      - postgres # Ensure postgres is up before starting Streamlit
+
+volumes:
+  pg_data:
+  # Mounts for Airflow DAGs, scripts, and data
