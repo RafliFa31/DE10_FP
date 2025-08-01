@@ -11,25 +11,23 @@ Pipeline ini diorkestrasi oleh Apache Airflow, menggunakan Python untuk ekstraks
 ## 📁 Project Structure
 
 ```plaintext
-bandung_airbatch/
+:\Users\NoXox\Documents\bandung_airbatch/
+├── data/
+│   ├── Kesehatan_Udara_Bandung_2022.xlsx  # Perhatikan: ini adalah file .xlsx, bukan .csv
+│   ├── Kesehatan_Udara_Bandung_2023.xlsx
+│   ├── Kesehatan_Udara_Bandung_2024.xlsx
+│   └── Kesehatan_Udara_Bandung_2025.xlsx
 ├── dags/
-│   ├── yearly_air_quality_pipeline.py           # Airflow DAG for annual workflow
-│   ├── scripts/
-│   │   ├── extract_bmkg.py                      # Fetch JSON from BMKG
-│   │   ├── extract_datago.py                    # Download & parse CSV/JSON from data.go.id
-│   │   ├── extract_nafas.py                     # Parse air-quality tables from PDF/Excel
-│   │   ├── extract_iqair.py                     # Scrape historical AQI & pollutant data
-│   │   └── load_to_staging.py                   # Load raw data into PostgreSQL staging
-│   └── sql/
-│       ├── create_table_staging_raw_air_quality.sql
-│       └── create_table_yearly_air_quality.sql
+│   ├── Dag_Bandung_yearly_air_quality_pipeline.py # Nama file DAG berbeda
+│   ├── Python Script_extract_local_csv.py         # Nama file script Python berbeda
+│   └── create_table_staging_raw_air_quality.sql   # SQL file ini langsung di dags/, bukan di dags/sql/
 ├── spark_jobs/
-│   └── yearly_air_quality.py                    # Spark job for annual aggregation
 ├── streamlit_app/
-│   └── app.py                                   # Streamlit dashboard & alert logic
-├── docker-compose.yml                           # Multi-container orchestration
-├── requirements.txt                             # Python dependencies
-└── README.md                                     # Project documentation
+│   ├── Streamlit requirements.txt                 # Nama file requirements Streamlit berbeda
+│   └── Streamlit.py                               # Nama file aplikasi Streamlit berbeda
+├── docker-compose.yml
+├── PySpark Job_Bandung_yearly_air_quality.py      # File PySpark ini ada di root, bukan di spark_jobs/
+└── requirements.txt
 
 
 
