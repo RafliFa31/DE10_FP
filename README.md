@@ -10,7 +10,7 @@ Pipeline ini diorkestrasi oleh Apache Airflow, menggunakan Python untuk ekstraks
 
 ## 📁 Project Structure
 
-```plaintext
+
 :\Users\NoXox\Documents\bandung_airbatch/
 ├── data/
 │   ├── Kesehatan_Udara_Bandung_2022.xlsx  # Perhatikan: ini adalah file .xlsx, bukan .csv
@@ -58,6 +58,7 @@ Features
 -🐳 Penyiapan Docker Compose untuk deployment.
 
 🛠️ Tech Stack
+
 | Component | Tool |
 |-----:|---------------|
 |Orchestration|Apache Airflow|
