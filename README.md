@@ -58,15 +58,17 @@ Features
 -🐳 Penyiapan Docker Compose untuk deployment.
 
 🛠️ Tech Stack
-Component            Tool
--------------------- --------------------------------------
-Orchestration        Apache Airflow
-Extraction & ETL     Python (requests, pandas, tabula-py)
-Batch Processing     Apache Spark
-Data Storage         PostgreSQL
-Visualization        Streamlit
-Alerting             SMTP, Telegram Bot
-Containerization     Docker, Docker Compose
+| Component | Tool |
+|-----:|---------------|
+|Orchestration|Apache Airflow|
+|Extraction & ETL|Python (requests, pandas, tabula-py)|
+|Batch Processing|Apache Spark|
+|Data Storage |PostgreSQL|
+|Visualization|Streamlit|
+|Alerting |SMTP, Telegram Bot|
+|Containerization|Docker, Docker Compose|
+
+
 
 [1. Sumber Data Awal]
     (untuk awal sekarang file excel dulu, kedepannya ditingkatin berbagai sumber kak, masih bingung :()
