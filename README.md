@@ -2,11 +2,9 @@
 
 ## 📄 Overview
 
-Proyek ini mengimplementasikan sebuah pipeline data end-to-end untuk memonitor kualitas udara tahunan (PM2.5) di Bandung. Dimulai dengan data historis dari laporan publik sebagai fondasi, arsitektur ini dirancang untuk dapat diperluas dengan sumber data dinamis seperti API di masa depan. Tujuan utamanya adalah mengotomatisasi analisis tren jangka panjang untuk mendukung kebijakan lingkungan dan memberdayakan masyarakat dengan data yang mudah diakses.
+Proyek ini mengimplementasikan pipeline data end-to-end untuk memonitor kualitas udara tahunan (PM2.5) di Bandung. Dimulai dengan data historis dari laporan publik sebagai fondasi, arsitektur ini dirancang untuk dapat diperluas dengan sumber data dinamis seperti API di masa depan. Tujuan utamanya adalah mengotomatisasi analisis tren jangka panjang untuk mendukung kebijakan lingkungan dan memberdayakan masyarakat dengan data yang mudah diakses.
 
 Pipeline ini diorkestrasi oleh Apache Airflow, menggunakan Python untuk ekstraksi data ke Neon DB (PostgreSQL) yang berfungsi sebagai staging area dan data warehouse. Transformasi dan agregasi data dijalankan oleh Apache Spark, dengan hasil akhir yang divisualisasikan pada dashboard Streamlit interaktif. Platform ini juga dirancang untuk dapat mengirimkan notifikasi otomatis melalui Email atau Telegram jika terdeteksi tingkat polusi yang melebihi ambang batas.
-
----
 
 ## 🎯 Objectives
 
@@ -15,8 +13,6 @@ Pipeline ini diorkestrasi oleh Apache Airflow, menggunakan Python untuk ekstraks
 - Menandai tahun-tahun dengan lonjakan polusi yang tidak biasa berdasarkan logika ambang batas
 - Memvisualisasikan tren jangka panjang via dashboard interaktif
 - Memberi tahu pemangku kepentingan secara otomatis melalui email atau Telegram
-
----
 
 ## 📁 Project Structure
 
@@ -40,11 +36,9 @@ bandung_airbatch/
 └── requirements.txt
 ```
 
----
-
 ## 📚 Data Sources
 
-Saat ini menggunakan dataset dari **Nafas Indonesia** dalam format Excel. Untuk pengembangan masa depan, akan diintegrasikan dengan:
+Saat ini menggunakan dataset dari Nafas Indonesia dalam format Excel. Untuk pengembangan masa depan, akan diintegrasikan dengan:
 
 - [Databoks](https://databoks.katadata.co.id/layanan-konsumen-kesehatan/statistik/3b72788adeb2920/kualitas-udara-di-kota-besar-indonesia-buruk-jauh-dari-standar-who)
 - BMKG API – archived daily JSON data
@@ -52,19 +46,15 @@ Saat ini menggunakan dataset dari **Nafas Indonesia** dalam format Excel. Untuk 
 - Nafas Indonesia – sensor reports in PDF/Excel format
 - IQAir Bandung – scraped AQI and pollutant archive
 
----
-
 ## ✨ Features
 
-- 🌐 **Ekstraksi data otomatis** dari file Excel yang disediakan (dengan potensi ekspansi ke API dan web scraping di masa depan)
-- 🗄️ **Staging PostgreSQL** dan warehouse terpartisi untuk kueri cepat
-- ⚡ **Spark batch jobs** untuk menghitung statistik tahunan
-- 📊 **Dashboard Streamlit interaktif** dengan filter dan bagan
-- 🔔 **Peringatan otomatis** via Telegram/email ketika polusi melebihi ambang batas
-- 🔁 **Penjadwalan otomatis** dengan Apache Airflow
-- 🐳 **Docker Compose** untuk deployment yang mudah
-
----
+- 🌐 **Ekstraksi Data Otomatis**: Membaca file Excel secara otomatis dengan potensi ekspansi ke API dan web scraping
+- 🗄️ **Data Storage**: Staging PostgreSQL dan warehouse terpartisi untuk kueri cepat
+- ⚡ **Batch Processing**: Spark jobs untuk menghitung statistik tahunan
+- 📊 **Interactive Dashboard**: Dashboard Streamlit dengan filter dan visualisasi
+- 🔔 **Alert System**: Notifikasi otomatis via Telegram/email ketika polusi melebihi ambang batas
+- 🔁 **Orchestration**: Penjadwalan otomatis dengan Apache Airflow
+- 🐳 **Containerization**: Docker Compose untuk deployment yang mudah
 
 ## 🛠️ Tech Stack
 
@@ -78,65 +68,79 @@ Saat ini menggunakan dataset dari **Nafas Indonesia** dalam format Excel. Untuk 
 | **Alerting** | SMTP, Telegram Bot |
 | **Containerization** | Docker, Docker Compose |
 
----
-
 ## 🔄 Pipeline Overview
 
 ```
-[1. Sumber Data Awal]
-    (File Excel)
-        ↓
-[2. Ekstraksi Data] ——— (Diorkestrasi oleh 💨 Airflow)
+[1. Data Source]
+    (Excel Files)
+         ↓
+[2. Data Extraction] ——— (Orchestrated by Apache Airflow)
     (Python Script)
-        ↓
+         ↓
 [3. Staging Area]
-    (Neon DB PostgreSQL 🐘)
-        ↓
-[4. Transformasi Data] ——— (Diorkestrasi oleh 💨 Airflow)
-    (Apache Spark ✨)
-        ↓
+    (Neon DB PostgreSQL)
+         ↓
+[4. Data Transformation] ——— (Orchestrated by Apache Airflow)
+    (Apache Spark)
+         ↓
 [5. Data Warehouse]
-    (Neon DB PostgreSQL 🐘)
-        ↓
-[6. Visualisasi & Aksi]
-    (Streamlit Dashboard 📊)
+    (Neon DB PostgreSQL)
+         ↓
+[6. Visualization & Actions]
+    (Streamlit Dashboard)
 ```
 
 ### Workflow Detail
 
-1. **ETL (Airflow DAG yearly_air_quality_pipeline)**
-   - **Extract**: Membaca data dari file Excel tahunan yang disediakan
-   - **Load (Staging)**: Menyimpan data mentah ke tabel `staging.raw_air_quality` di PostgreSQL
+#### 1. ETL (Airflow DAG yearly_air_quality_pipeline)
+- **Extract**: Membaca data dari file Excel tahunan yang disediakan
+- **Load (Staging)**: Menyimpan data mentah ke tabel `staging.raw_air_quality` di PostgreSQL
 
-2. **Analytics Generation (Spark Job)**
-   - **Transform**: Membaca data dari staging, memvalidasi skema, dan melakukan transformasi dasar
-   - **Load (Warehouse)**: Menyimpan data matang yang sudah diolah ke tabel `warehouse.fact_yearly_air_quality`
+#### 2. Analytics Generation (Spark Job)
+- **Transform**: Membaca data dari staging, memvalidasi skema, dan melakukan transformasi dasar
+- **Load (Warehouse)**: Menyimpan data matang yang sudah diolah ke tabel `warehouse.fact_yearly_air_quality`
 
-3. **Visualization (Streamlit)**
-   - **Query**: Aplikasi Streamlit melakukan kueri langsung ke tabel warehouse di PostgreSQL
-   - **Display**: Menampilkan tren kualitas udara tahunan dalam bentuk grafik batang dan tabel interaktif
+#### 3. Visualization (Streamlit)
+- **Query**: Aplikasi Streamlit melakukan kueri langsung ke tabel warehouse di PostgreSQL
+- **Display**: Menampilkan tren kualitas udara tahunan dalam bentuk grafik batang dan tabel interaktif
 
----
+## 🚀 Quick Start
 
-## 🗄️ Database Connection
+### Prerequisites
+- Docker & Docker Compose
+- Git
 
+### Setup
+
+1. **Clone repository**
+```bash
+git clone <repository-url>
+cd bandung_airbatch
+```
+
+2. **Setup environment**
+```bash
+docker-compose up -d
+```
+
+3. **Access services**
+   - **Airflow**: http://localhost:8080
+   - **Streamlit**: http://localhost:8501
+
+### Database Connection
 ```bash
 psql 'postgresql://neondb_owner:npg_odbj5JHY0pwO@ep-cold-grass-a18xlnz0-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 ```
 
----
+## ⚠️ Current Limitations
 
-## ⚠️ Keterbatasan & Rencana Pengembangan
-
-### Keterbatasan Saat Ini
-
-- Dataset statis, belum mendukung incremental load atau streaming
+- Dataset bersifat statis, belum mendukung incremental load atau streaming
 - Tidak semua field (seperti tanggal transaksi) diproses secara time-series (fokus saat ini pada agregasi tahunan)
 - Belum terhubung ke BI tools lain seperti Looker/Power BI
 - Proses ekstraksi data masih bergantung pada file Excel yang disiapkan secara semi-manual
-- Platform hanya berjalan dalam mode batch (tahunan), sehingga cocok untuk analisis historis tetapi tidak untuk pemantauan real-time
+- Platform hanya berjalan dalam mode batch (tahunan), cocok untuk analisis historis tetapi tidak untuk pemantauan real-time
 
-### Rencana Pengembangan
+## 🔮 Future Development Plans
 
 - **Time Dimension Enhancement**: Menambah analitik per bulan atau per hari untuk analisis tren yang lebih granular
 - **Automated Reporting**: Scheduler untuk export PNG otomatis dari dashboard
@@ -145,40 +149,19 @@ psql 'postgresql://neondb_owner:npg_odbj5JHY0pwO@ep-cold-grass-a18xlnz0-pooler.a
 - **Advanced Analytics**: Analisis prediktif (forecasting) dan korelasi dengan data cuaca atau lalu lintas
 - **BI Tools Integration**: Koneksi ke Looker, Power BI, atau tools visualisasi enterprise lainnya
 
----
-
-## 🚀 Quick Start
-
-1. **Clone repository**
-   ```bash
-   git clone <repository-url>
-   cd bandung_airbatch
-   ```
-
-2. **Setup environment**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Access services**
-   - Airflow: `http://localhost:8080`
-   - Streamlit: `http://localhost:8501`
-
----
-
 ## 👤 Author
 
 **Rafli Firmansyah**  
 Project ini dibangun untuk tujuan edukasi dan pengembangan portofolio di bidang data engineering.
 
----
-
 ## 📝 License
 
 Proyek ini ditujukan untuk penggunaan edukasi dan portofolio.
 
----
-
 ## 📞 Support
 
 Jika ada pertanyaan atau saran pengembangan, silakan buat issue atau hubungi penulis.
+
+---
+
+> **Note**: Project ini masih dalam tahap pengembangan dan akan terus disempurnakan dengan fitur-fitur tambahan.
